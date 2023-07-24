@@ -1,0 +1,5 @@
+curl -H "Content-Type: application/json" -d '{"email":"A@dfdsf","pkey":"dfsf","prkey":"fds"}' "localhost:5002/p"
+
+https://bruinsslot.jp/post/golang-crypto/
+
+
