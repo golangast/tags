@@ -59,14 +59,14 @@ func posts(c echo.Context) error {
 	if err := c.Bind(&u); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError)
 	}
-
-	ekey, err := Decrypt([]byte("news"), u.Ekey)
+	fmt.Println(u.PK)
+	ekey, err := Decrypt(u.PK, u.Ekey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Printf("plaintext: %s\n", ekey)
-	key, err := Decrypt([]byte("news"), u.Key)
+	key, err := Decrypt(u.PK, u.Key)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -77,6 +77,7 @@ func posts(c echo.Context) error {
 }
 
 type User struct {
+	PK   []byte `json:"pk" validate:"required"`
 	Ekey []byte `json:"ekey" validate:"required"`
 	Key  []byte `json:"key" validate:"required"`
 }

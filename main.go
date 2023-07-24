@@ -65,19 +65,23 @@ func posts(c echo.Context) error {
 }
 func gets(c echo.Context) error {
 
-	cipherkeys, err := Encrypt([]byte("news"), []byte("privatekey"))
+	k := Keyen()
+	fmt.Println(k)
+	cipherkeys, err := Encrypt(k, []byte("privatekey"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Printf("cipherkeys: %s\n", hex.EncodeToString(cipherkeys))
-	cipherkey, err := Encrypt([]byte("news"), []byte("james@yahoo.com"))
+	cipherkey, err := Encrypt(k, []byte("james@yahoo.com"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	fmt.Printf("cipherkeys: %s\n", hex.EncodeToString(cipherkey))
+
 	u := User{
+		PK:   k,
 		Ekey: cipherkeys,
 		Key:  cipherkey,
 	}
@@ -110,6 +114,7 @@ func gets(c echo.Context) error {
 }
 
 type User struct {
+	PK   []byte `json:"pk" validate:"required"`
 	Ekey []byte `json:"ekey" validate:"required"`
 	Key  []byte `json:"key" validate:"required"`
 }
@@ -184,4 +189,11 @@ func DeriveKey(password, salt []byte) ([]byte, []byte, error) {
 	}
 
 	return key, salt, nil
+}
+func Keyen() []byte {
+	bytes := make([]byte, 64) //generate a random 32 byte key for AES-256
+	if _, err := rand.Read(bytes); err != nil {
+		panic(err.Error())
+	}
+	return bytes
 }
